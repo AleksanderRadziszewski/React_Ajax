@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
 
-function App() {
+class App extends Component  {
+
+  state = {
+    text: "type a date",
+    error: ""
+  }
+
+  handleDateChange = (e) => {
+    const value = this.refs.number.value;
+    fetch(`http://numbersapi.com/${value}/year?json`)
+    .then(res => {
+      if(res.ok) {
+        return res
+      }
+      throw Error(res.status);
+    })
+    .then (res => res.json())
+    .then(data => this.setState({
+      text: data.text
+    }))
+    .catch(err => {
+      this.setState({text: "Something is wrong :(" + err})
+    }) 
+  }
+
+  render(){
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input onChange={this.handleDateChange} type="text" ref= "number"/>
+  <p>In this year: {this.state.text}</p>
     </div>
   );
+}
 }
 
 export default App;
